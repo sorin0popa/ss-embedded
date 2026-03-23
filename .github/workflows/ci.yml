@@ -92,3 +92,6 @@ jobs:
 
       - name: Security scan with Bandit
         run: bandit receiver.py -ll
+
+      - name: Compile receiver
+        run: python -m py_compile receiver.p
