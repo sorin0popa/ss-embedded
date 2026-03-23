@@ -11,7 +11,7 @@
 // ===========================
 // Configuration
 // ===========================
-const char* ssid     = "anonymous";       // TODO: Modificați cu SSID-ul rețelei voastre
+const char* ssid     = "anonymous"       // TODO: Modificați cu SSID-ul rețelei voastre
 const char* password = "NOT HERE";     // TODO: Modificați cu parola rețelei voastre
 const char* mqtt_server = "10.206.13.159"; // TODO: Modificați cu IP-ul calculatorului (ip addr / ipconfig)
 const int mqtt_port = 1883;
