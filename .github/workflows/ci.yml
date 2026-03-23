@@ -1,0 +1,94 @@
+name: ESP32-CAM CI Pipeline
+ 
+# Declanșare la push sau pull request pe branch-ul main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # =============================================
+  # Job 1: Compilarea firmware-ului ESP32
+  # =============================================
+  build-firmware:
+    name: Build ESP32 Firmware
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build Firmware (ESP32-CAM AI-Thinker)
+        run: pio run -e esp32cam
+ 
+      # Salvăm firmware.bin ca artifact descărcabil
+      - name: Upload Firmware Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-esp32cam
+          path: .pio/build/esp32cam/firmware.bin
+ 
+  # =============================================
+  # Job 2: Analiza statică C++ (Firmware)
+  # =============================================
+  analyze-firmware:
+    name: Static Analysis (C++)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Cppcheck
+        run: sudo apt-get install -y cppcheck
+
+      - name: Run Cppcheck
+        run: |
+          cppcheck --enable=all \
+                   --inconclusive \
+                   --std=c++11 \
+                   -I include/ \
+                   --suppress=missingIncludeSystem \
+                   --suppress=missingInclude \
+                   --suppress=unusedFunction \
+                   --suppress=cstyleCast \
+                   --error-exitcode=1 \
+                   src/
+
+  # =============================================
+  # Job 3: Verificarea codului Python (Receiver)
+  # =============================================
+  check-python:
+    name: Python Lint & Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install pylint bandit
+          # opencv-python-headless se folosește în CI (fără display)
+          pip install paho-mqtt opencv-python-headless numpy
+
+      - name: Lint with Pylint
+        # || true = soft-fail, pipeline-ul nu eșuează pe warning-uri pylint
+        run: pylint --disable=C0114,C0115,C0116,C0103 receiver.py || true
+
+      - name: Security scan with Bandit
+        run: bandit receiver.py -ll
