@@ -53,7 +53,7 @@ jobs:
 
       - name: Run Cppcheck
         run: |
-          cppcheck --enable=all \
+          cppcheck --enable=all ./camera/src \
                    --inconclusive \
                    --std=c++11 \
                    -I include/ \
