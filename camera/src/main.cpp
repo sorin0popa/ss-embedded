@@ -6,7 +6,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 // CAMERA_MODEL is defined in platformio.ini
-#include "camera_pins.h"
+#include "../include/camera_pins.h"
  
 // ===========================
 // Configuration
