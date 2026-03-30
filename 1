@@ -1,0 +1,22 @@
+Checking camera/src/main.cpp ...
+camera/src/main.cpp:5:0: information: Include file: "esp_camera.h" not found. [missingInclude]
+#include "esp_camera.h"
+^
+camera/src/main.cpp:7:0: information: Include file: <WiFiClientSecure.h> not found. Please note: Cppcheck does not need standard library headers to get proper results. [missingIncludeSystem]
+#include <WiFiClientSecure.h>
+^
+camera/src/main.cpp:8:0: information: Include file: <PubSubClient.h> not found. Please note: Cppcheck does not need standard library headers to get proper results. [missingIncludeSystem]
+#include <PubSubClient.h>
+^
+camera/src/main.cpp:11:0: information: Include file: "../include/secrets.h" not found. [missingInclude]
+#include "../include/secrets.h"
+^
+Checking camera/src/main.cpp: CAMERA_MODEL_AI_THINKER...
+camera/src/main.cpp:184:38: style: C-style pointer casting [cstyleCast]
+    if (client.publish(TOPIC_IMAGE, (const uint8_t*)fb->buf, fb->len)) {
+                                     ^
+camera/src/main.cpp:149:0: style: The function 'setup' is never used. [unusedFunction]
+void setup() {
+^
+nofile:0:0: information: Active checkers: 172/592 (use --checkers-report=<filename> to see details) [checkersReport]
+

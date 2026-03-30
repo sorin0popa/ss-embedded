@@ -4,11 +4,11 @@ import numpy as np
 import threading
  
 # Configuration
-BROKER = "10.206.13.159"  # Modificați cu IP-ul brokerului vostru
-PORT = 1883
-TOPIC_IMAGE = "ssproject/images"
-TOPIC_COMMAND = "ssproject/commands"
- 
+BROKER = os.getenv("BROKER")
+PORT = int(os.getenv("PORT", 1883))
+TOPIC_IMAGE = os.getenv("TOPIC_IMAGE")
+TOPIC_COMMAND = os.getenv("TOPIC_COMMAND")
+
 # Global flags
 running = True
  
@@ -45,7 +45,9 @@ def main():
     client.on_message = on_message
  
     try:
-        client.connect(BROKER, PORT, 60)
+        client.tls_set(ca_certs="certs/ca.crt")
+
+        client.connect(BROKER, 8883, 60)
         client.loop_start()
  
         print("\n--- ESP32 Camera Controller ---")

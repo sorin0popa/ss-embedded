@@ -3,18 +3,41 @@
   Description : ESP32-CAM MQTT Image Transfer
 **********************************************************************/
 #include "esp_camera.h"
-#include <WiFi.h>
+// #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 // CAMERA_MODEL is defined in platformio.ini
 #include "../include/camera_pins.h"
+#include "../include/secrets.h"
  
+const char* ca_cert = \
+"-----BEGIN CERTIFICATE-----" \
+"MIIDETCCAfmgAwIBAgIUaHi3G1wCp6QyAKWCcWMUdLGkK9QwDQYJKoZIhvcNAQEL \n" \
+"BQAwGDEWMBQGA1UEAwwNU1MtUHJvamVjdC1DQTAeFw0yNjAzMzAxNzE0MTFaFw0z \n" \
+"NjAzMjcxNzE0MTFaMBgxFjAUBgNVBAMMDVNTLVByb2plY3QtQ0EwggEiMA0GCSqG \n" \
+"SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDYx7Bl5MXRVOiKbmuYfYeZYggouqI5RdEb \n" \
+"iU4AkRd9F5FuIxCSlqJvpWlxIEHYpadBT2x945llxyE5H76uwHznrnvTL7s7G02S \n" \
+"baMmaPqGnrC0krTFuxLYTqjqXYhSA7ld1Ez/UCakCc/1G9ziW1L2TerMYcUzuRPe \n" \
+"28vt18DTVAeL9X0oaXjfkOENuVgSjBDwEnOG1c3rneFYsyE0JWxhOT929u+5y5r0 \n" \
+"Qvd9apMcr19yGHn75mYtYsABlel/hys+u8GZAdPEK0vUVEAH3/Ilt9sqVBBuQC3B \n" \
+"/QVrJSYDzrZRaT4hDfmGz5ikriL4REha+S4G76yPHby+sMSwEiCXAgMBAAGjUzBR \n" \
+"MB0GA1UdDgQWBBSBn32L7hEh2+CO6ocb7bdW0EKKLzAfBgNVHSMEGDAWgBSBn32L \n" \
+"7hEh2+CO6ocb7bdW0EKKLzAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUA \n" \
+"A4IBAQCma8Rtvw3gkVrVeA6JV/gGunAcw3VtFb550FHUEo7w1HLJexvRdSAmC+19 \n" \
+"lqNKgmPFiphhQv+1zLsgi83aEbWovP2H+Q9I6/8f2uABISA8KUMw0U9PrPFaa5gz \n" \
+"0W6U4DyIoMPIl1FGyKlmCvR8dZfo9speHrMwP78N0prGY2dqMGJze1eZQOFLbP5u \n" \
+"DzhU/EJataiOeQQNCzzELt5D4w9z+Rsu8ajs3Gjq0A0oeSmmxVYDGflRTADpahmq \n" \
+"qIdIGadUiqMjOjjXy+ZW7P9s5uRwYmYHPQP0FkZBHrRZtNGCKTRHtCFyraKDbyQW \n" \
+"7dHSpeAfp+VuhGXQw8coVCabVD2U \n" \
+"-----END CERTIFICATE-----";
+
+WiFiClientSecure espClient;
+
 // ===========================
 // Configuration
 // ===========================
-const char* ssid     = "anonymous"       // TODO: Modificați cu SSID-ul rețelei voastre
-const char* password = "NOT HERE";     // TODO: Modificați cu parola rețelei voastre
-const char* mqtt_server = "10.206.13.159"; // TODO: Modificați cu IP-ul calculatorului (ip addr / ipconfig)
-const int mqtt_port = 1883;
+
+
  
 // Topics
 const char* TOPIC_COMMAND = "ssproject/commands";
@@ -143,7 +166,10 @@ void setup() {
   }
   Serial.printf("\nWiFi connected! IP: %s\n", WiFi.localIP().toString().c_str());
  
-  client.setServer(mqtt_server, mqtt_port);
+  espClient.setCACert(ca_cert);
+
+  // client.setServer(mqtt_server, mqtt_port);
+  client.setServer(mqtt_server, 8883);
   client.setCallback(callback);
   client.setBufferSize(65000); 
 }
