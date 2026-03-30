@@ -5,7 +5,7 @@ import threading
  
 # Configuration
 BROKER = os.getenv("BROKER")
-PORT = int(os.getenv("PORT", 1883))
+PORT = int(os.getenv("PORT", 8883))
 TOPIC_IMAGE = os.getenv("TOPIC_IMAGE")
 TOPIC_COMMAND = os.getenv("TOPIC_COMMAND")
 
